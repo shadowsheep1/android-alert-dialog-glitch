@@ -1,7 +1,9 @@
 package com.example.alertdialogglitch
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +15,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import com.example.alertdialogglitch.databinding.ActivityMainBinding
 
@@ -60,11 +63,31 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+            dispatchChoosePictureFromGalleryAppIntentIntent()
         }
 
         setupProgressHud()
+    }
+
+    private fun dispatchChoosePictureFromGalleryAppIntentIntent() {
+        Intent(
+            Intent.ACTION_PICK,
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        ).apply {
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+            resolveActivity(packageManager)?.also {
+                requestImageChooserLauncher.launch(this)
+            }
+        }
+    }
+
+
+    private var requestImageChooserLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val resultCode = result.resultCode
+        val data = result.data
+        // TODO ...
     }
 
     private fun setupProgressHud() {

@@ -1,6 +1,7 @@
 package com.example.alertdialogglitch
 
 import android.os.Bundle
+import android.os.Handler
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -33,7 +34,11 @@ class FirstFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.buttonFirst.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+            (activity as? MainActivity)?.showProgressHud("Loading...")
+            Handler().postDelayed({
+                findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+                (activity as? MainActivity)?.hideProgressHud()
+            }, 5000)
         }
     }
 
